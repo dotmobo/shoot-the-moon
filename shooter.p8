@@ -258,8 +258,13 @@ end
 
 function draw_gameover()
  cls(1)
- rectfill(31,53,105,79,0)
- rectfill(28,50,102,76,2)
+ rectfill(31,43,105,79,0)
+ rectfill(28,40,102,76,2)
+ if p.life==0 then
+ 	print("defeat!",54,46,6)
+ else
+		print("victory!",52,46,6)
+ end
  print("score:"..score,53,56,6)
  print("🅾️/c to continue",34,66,6)
 end
