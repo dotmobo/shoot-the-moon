@@ -4,7 +4,8 @@ __lua__
 --shoot the moon
 --mobo
 c_goal=5000
-c_ship={x=60,y=60,speed=2,life=3}
+c_ship_life=3
+c_ship_speed=2
 c_max_enemies=12
 c_max_boss=1
 c_bullet_speed=4
@@ -15,24 +16,37 @@ c_boss_life=50
 c_boss_speed=1
 
 function _init()
-	state=0
-	init_game()
+	state=2
 end
 
 function _update60()
 	if (state==0) update_game()
 	if (state==1) update_gameover()
+	if (state==2) update_gamestart()
 end
 
 function _draw()
 	if (state==0) draw_game()
 	if (state==1) draw_gameover()
+	if (state==2) draw_gamestart()
+end
+-->8
+-- game start
+function update_gamestart()
+	if (btn(🅾️)) init_game()
 end
 
+function draw_gamestart()
+	cls(1)
+	rectfill(31,43,105,79,0)
+	rectfill(28,40,102,76,2)
+	print("Shoot the moon!",36,46,6)
+	print("c or 🅾️ to start",34,66,6)
+end
 -->8
 -- game
 function init_game()
-	p=c_ship
+	p={x=60,y=60,speed=c_ship_speed,life=c_ship_life}
 	bullets={}
 	enemies_bullets={}
 	enemies={}
@@ -42,6 +56,7 @@ function init_game()
 	create_stars()
 	score=0
 	music_start=false
+	state=0
 end
 
 function update_game()
@@ -309,7 +324,7 @@ end
 -->8
 -- game over
 function update_gameover()
-	if (btn(🅾️)) _init()
+	if (btn(🅾️)) init_game()
 	if music_start then
 		music_start=false
 		music(-1)
@@ -326,7 +341,7 @@ function draw_gameover()
 		print("victory!",52,46,6)
  	end
 	print("score:"..score,53,56,6)
-	print("🅾️/c to continue",34,66,6)
+	print("c/🅾️ to continue",34,66,6)
 end
 -->8
 --boss
