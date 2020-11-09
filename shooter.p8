@@ -37,11 +37,14 @@ function update_gamestart()
 end
 
 function draw_gamestart()
-	cls(1)
-	rectfill(31,43,105,79,0)
-	rectfill(28,40,102,76,2)
-	print("Shoot the moon!",36,46,6)
-	print("c or 🅾️ to start",34,66,6)
+	cls()
+	rectfill(31,83,105,119,13)
+	rectfill(28,80,102,116,2)
+	spr(4,128/2-12,128/6-12,4,4)
+	spr(2,128/2-4,48)
+	spr(1,128/2-4,64)
+	print("Shoot the moon!",36,86,6)
+	print("c or 🅾️ to start",34,106,6)
 end
 -->8
 -- game
@@ -332,8 +335,8 @@ function update_gameover()
 end
 
 function draw_gameover()
-	cls(1)
-	rectfill(31,43,105,79,0)
+	cls()
+	rectfill(31,43,105,79,13)
 	rectfill(28,40,102,76,2)
 	if p.life==0 then
  		print("defeat!",54,46,6)
@@ -383,22 +386,7 @@ end
 
 function draw_boss()
 	for bo in all(boss) do
-		spr(4,bo.x,bo.y)
-		spr(5,bo.x+8,bo.y)
-		spr(6,bo.x+16,bo.y)
-		spr(7,bo.x+24,bo.y)
-		spr(20,bo.x,bo.y+8)
-		spr(21,bo.x+8,bo.y+8)
-		spr(22,bo.x+16,bo.y+8)
-		spr(23,bo.x+24,bo.y+8)
-		spr(36,bo.x,bo.y+16)
-		spr(37,bo.x+8,bo.y+16)
-		spr(38,bo.x+16,bo.y+16)
-		spr(39,bo.x+24,bo.y+16)
-		spr(52,bo.x,bo.y+24)
-		spr(53,bo.x+8,bo.y+24)
-		spr(54,bo.x+16,bo.y+24)
-		spr(55,bo.x+24,bo.y+24)
+		spr(4,bo.x,bo.y,4,4)
 	end
 end
 -->8
