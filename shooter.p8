@@ -5,15 +5,32 @@ __lua__
 --mobo
 
 function _init()
+	state=0
+	init_game()
+end
+
+function _update60()
+	if (state==0) update_game()
+	if (state==1) update_gameover()
+end
+
+function _draw()
+	if (state==0) draw_game()
+	if (state==1) draw_gameover()
+end
+
+-->8
+-- game
+function init_game()
 	p={x=60,y=60,speed=2,life=3}
 	bullets={}
 	enemies_bullets={}
 	enemies={}
 	boss={}
 	explosions={}
+	stars={}
 	create_stars()
 	score=0
-	state=0
 	music_start=false
 end
 
@@ -47,23 +64,15 @@ function draw_game()
 	draw_enemies()
 	draw_boss()
 	draw_explosions()
- draw_score()
+	draw_score()
 	draw_life()
 end
 
-function _update60()
-	if (state==0) update_game()
-	if (state==1) update_gameover()
-end
 
-function _draw()
-	if (state==0) draw_game()
-	if (state==1) draw_gameover()
-end
 -->8
 -- bullets
 function shoot()
-	new_bullet={
+	local new_bullet={
 		x=p.x,
 		y=p.y;
 		speed=4
@@ -87,13 +96,11 @@ function draw_bullets()
 	end
 end
 
-
 -->8
 -- stars
 function create_stars()
-	stars={}
 	for i=1,8 do
-		new_star={
+		local new_star={
 			x=rnd(128),
 			y=rnd(128),
 			col=rnd({5,6}),
@@ -102,7 +109,7 @@ function create_stars()
 		add(stars,new_star)
 	end
 	for i=1,14 do
-		new_star={
+		local new_star={
 			x=rnd(128),
 			y=rnd(128),
 			col=rnd({9,14,15}),
@@ -123,11 +130,11 @@ function update_stars()
 end
 
 function draw_stars()
-	--stars
 	for s in all(stars) do
 		pset(s.x,s.y,s.col)
 	end
 end
+
 -->8
 --player
 function update_player()
@@ -187,28 +194,25 @@ end
 --enemies
 function spawn_enemies(n)
 	for i=1,n do
-		local x,y,gap,nr,ir
+		local x,y,gap,nr,ir,yr
 		if i<=4 then
-		 ir=i
-		 if (n>4) nr=4 else nr=n
-			gap=(128-8*nr)/(nr+1)
-			x=gap*ir+8*(ir-1)
-			y=-20
+			ir=i
+		 	if (n>4) nr=4 else nr=n
+			yr=0
 		elseif i>4 and i<=8 then
-		 ir=i-4
+			ir=i-4
 			if (n>8) nr=8-4 else nr=n-4
-			gap=(128-8*nr)/(nr+1)
-			x=gap*ir+8*(ir-1)
-	 	y=-20-2*8
-	 elseif i>8 then
-		 nr=n-8
-	  ir=i-8
-	 	gap=(128-8*nr)/(nr+1)
-	 	x=gap*ir+8*(ir-1)
-	 	y=-20-4*8
+			yr=2
+	 	elseif i>8 then
+			nr=n-8
+	  		ir=i-8
+	 		yr=4
 		end
+		gap=(128-8*nr)/(nr+1)
+		x=gap*ir+8*(ir-1)
+		y=-20-yr*8
 
-		new_enemy={
+		local new_enemy={
 			x=x,
 			y=y,
 			life=3,
@@ -303,22 +307,22 @@ function update_gameover()
 end
 
 function draw_gameover()
- cls(1)
- rectfill(31,43,105,79,0)
- rectfill(28,40,102,76,2)
- if p.life==0 then
- 	print("defeat!",54,46,6)
- else
+	cls(1)
+	rectfill(31,43,105,79,0)
+	rectfill(28,40,102,76,2)
+	if p.life==0 then
+ 		print("defeat!",54,46,6)
+ 	else
 		print("victory!",52,46,6)
- end
- print("score:"..score,53,56,6)
- print("🅾️/c to continue",34,66,6)
+ 	end
+	print("score:"..score,53,56,6)
+	print("🅾️/c to continue",34,66,6)
 end
 -->8
 --boss
 function spawn_boss(n)
 	for i=1,n do
-		new_boss={
+		local new_boss={
 			x=rnd(127-24),
 			y=-20,
 			life=50,
@@ -375,7 +379,7 @@ end
 -->8
 -- enemies bullets
 function enemy_shoot(e)
-	new_bullet={
+	local new_bullet={
 		x=e.x,
 		y=e.y;
 		speed=1,
