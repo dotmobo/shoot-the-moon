@@ -3,6 +3,16 @@ version 29
 __lua__
 --shoot the moon
 --mobo
+c_goal=5000
+c_ship={x=60,y=60,speed=2,life=3}
+c_max_enemies=12
+c_max_boss=1
+c_bullet_speed=4
+c_enemy_bullet_speed=1
+c_enemy_life=3
+c_enemy_speed=0.3
+c_boss_life=50
+c_boss_speed=1
 
 function _init()
 	state=0
@@ -22,7 +32,7 @@ end
 -->8
 -- game
 function init_game()
-	p={x=60,y=60,speed=2,life=3}
+	p=c_ship
 	bullets={}
 	enemies_bullets={}
 	enemies={}
@@ -44,10 +54,10 @@ function update_game()
 	update_bullets()
 	update_enemies_bullets()
 	if #enemies==0 then
-		if score<5000 then
-			spawn_enemies(2+ceil(rnd(10)))
+		if score<c_goal then
+			spawn_enemies(2+ceil(rnd(c_max_enemies-2)))
 		elseif #boss==0 then
-			spawn_boss(1)
+			spawn_boss(c_max_boss)
 		end
 	end
 	update_enemies()
@@ -75,7 +85,7 @@ function shoot()
 	local new_bullet={
 		x=p.x,
 		y=p.y;
-		speed=4
+		speed=c_bullet_speed
 	}
 	add(bullets, new_bullet)
 	sfx(0)
@@ -182,7 +192,7 @@ function draw_player()
 end
 
 function draw_score()
-	print(score,2,2,10)
+	print(score.."/"..c_goal,2,2,10)
 end
 
 function draw_life()
@@ -215,8 +225,8 @@ function spawn_enemies(n)
 		local new_enemy={
 			x=x,
 			y=y,
-			life=3,
-			speed=0.3,
+			life=c_enemy_life,
+			speed=c_enemy_speed,
 			type=rnd({3,19,35,51}),
 			shoot_timer=flr(rnd(90))
 		}
@@ -325,8 +335,8 @@ function spawn_boss(n)
 		local new_boss={
 			x=rnd(127-24),
 			y=-20,
-			life=50,
-			speed=1
+			life=c_boss_life,
+			speed=c_boss_speed
 		}
 		add(boss, new_boss)
 		end
@@ -382,7 +392,7 @@ function enemy_shoot(e)
 	local new_bullet={
 		x=e.x,
 		y=e.y;
-		speed=1,
+		speed=c_enemy_bullet_speed,
 		type=18
 	}
 	add(enemies_bullets, new_bullet)
