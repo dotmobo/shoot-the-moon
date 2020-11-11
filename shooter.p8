@@ -465,10 +465,10 @@ end
 -->8
 -- boss bullets
 function boss_shoot(e)
-	for i=1,4 do
+	for i=1,8 do
 		local new_bullet={
-			x=e.x+32/2,
-			y=e.y+32/2;
+			x=e.x+32/2-4,
+			y=e.y+32/2+10,
 			speed=c_enemy_boss_speed,
 			type=18,
 			dir=i --1 left 2 right 3 top 4 bottom
@@ -486,8 +486,20 @@ function update_boss_bullets()
 			b.x+=b.speed
 		elseif b.dir==3 then
 			b.y-=b.speed
-		else
+		elseif b.dir==4 then
 			b.y+=b.speed
+		elseif b.dir==5 then
+			b.x-=b.speed
+			b.y-=b.speed
+		elseif b.dir==6 then
+			b.x+=b.speed
+			b.y+=b.speed
+		elseif b.dir==7 then
+			b.x-=b.speed
+			b.y+=b.speed
+		elseif b.dir==8 then
+			b.x+=b.speed
+			b.y-=b.speed
 		end
 
 		if b.y<-8 or b.y>128+8 or b.x<-8 or b.x>128+8 then
