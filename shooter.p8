@@ -10,6 +10,7 @@ c_max_enemies=12
 c_max_boss=1
 c_bullet_speed=4
 c_enemy_bullet_speed=1
+c_enemy_boss_speed=1.5
 c_enemy_life=3
 c_enemy_speed=0.3
 c_boss_life=50
@@ -56,6 +57,7 @@ function init_game()
 	enemies={}
 	love={}
 	boss={}
+	boss_bullets={}
 	explosions={}
 	stars={}
 	create_stars()
@@ -82,6 +84,7 @@ function update_game()
 	end
 	update_enemies()
 	update_boss()
+	update_boss_bullets()
 	update_love()
 	update_explosions()
 end
@@ -93,6 +96,7 @@ function draw_game()
 	draw_enemies_bullets()
 	draw_player()
 	draw_enemies()
+	draw_boss_bullets()
 	draw_boss()
 	draw_love()
 	draw_explosions()
@@ -203,6 +207,14 @@ function update_player()
 			p.life-=1
 		end
 	end
+	-- boss bullets
+	for b in all(boss_bullets) do
+		if collide(p,b) then
+			create_explosion(b.x+4,b.y+2)
+			del(boss_bullets,b)
+			p.life-=1
+		end
+	end
 	-- love
 	for l in all(love) do
 		if collide(p,l) then
@@ -285,7 +297,7 @@ function update_enemies()
 					del(enemies,e)
 					sfx(2)
 					score+=100
-					if p.life<c_ship_life and 
+					if p.life<c_ship_life and
 						ceil(rnd(10))==6 then
 						spawn_love(e)
 					end
@@ -370,12 +382,14 @@ end
 -->8
 --boss
 function spawn_boss(n)
+	sfx(6)
 	for i=1,n do
 		local new_boss={
 			x=rnd(127-32),
 			y=-48,
 			life=c_boss_life,
-			speed=c_boss_speed
+			speed=c_boss_speed,
+			shoot_timer=flr(rnd(90))
 		}
 		add(boss, new_boss)
 		end
@@ -402,16 +416,24 @@ function update_boss()
 				end
 			end
 		end
+		--shoot
+		bo.shoot_timer+=1
+		if bo.shoot_timer==120 then
+			boss_shoot(bo)
+		bo.shoot_timer=flr(rnd(40))
+		end
 	end
 end
 
 function draw_boss()
+ palt(16)
 	for bo in all(boss) do
 		spr(4,bo.x,bo.y,4,4)
 		for i=1,bo.life/5 do
 			spr(8,16+i*8,0)
 		end
 	end
+	palt()
 end
 -->8
 -- enemies bullets
@@ -429,7 +451,7 @@ end
 function update_enemies_bullets()
 	for b in all(enemies_bullets) do
 		b.y+=b.speed
-		if b.y<-8 then
+		if b.y>128+8 then
 			del(enemies_bullets,b)
 		end
 	end
@@ -437,6 +459,45 @@ end
 
 function draw_enemies_bullets()
 	for b in all(enemies_bullets) do
+		spr(b.type,b.x,b.y)
+	end
+end
+-->8
+-- boss bullets
+function boss_shoot(e)
+	for i=1,4 do
+		local new_bullet={
+			x=e.x+32/2,
+			y=e.y+32/2;
+			speed=c_enemy_boss_speed,
+			type=18,
+			dir=i --1 left 2 right 3 top 4 bottom
+		}
+		add(boss_bullets, new_bullet)
+	end
+	sfx(0)
+end
+
+function update_boss_bullets()
+	for b in all(boss_bullets) do
+		if b.dir==1 then
+			b.x-=b.speed
+		elseif b.dir==2 then
+			b.x+=b.speed
+		elseif b.dir==3 then
+			b.y-=b.speed
+		else
+			b.y+=b.speed
+		end
+
+		if b.y<-8 or b.y>128+8 or b.x<-8 or b.x>128+8 then
+			del(boss_bullets,b)
+		end
+	end
+end
+
+function draw_boss_bullets()
+	for b in all(boss_bullets) do
 		spr(b.type,b.x,b.y)
 	end
 end
@@ -636,6 +697,7 @@ __sfx__
 0118000004022070220b0220702204022070220b0220702204022070220b0220702204022070220b0220702204022070220b0220702204022070220b0220702204022070220b0220702204022070220b02207022
 011800002402200002000020000228022000022602200002290220000200002000022802200002000020000224022000020000200002280220000226022000021a02200002000021d02200000000001c02200000
 000100000000000010000200002001030010300203003040050400604007040090400a0400b0400c0500d0500e0500f05010050130501405016050190501b0501d05020050220502505026050290502a0502b050
+00020000003002b35028350243501f3501a350173501535014350143501435014350173501a3501e3502135024350253502535023350203501a3501535012350123501435015350183501a3501d3502035022350
 __music__
 01 03444344
 02 03044344
